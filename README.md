@@ -28,7 +28,10 @@ This project involves multiple stages:
 - **Output**: Client-Server page for representing game states.
 - **Power Supply**: 3.3V supply for ESP-8266 or USB power.
 
-## Future Development:
-The next tasks will focus on enhancing the user experience by adding additional hardware components and ensuring that the game can be played with minimal hardware requirements. Future hardware components may include:
+## New features
+- Software client with connecting to HW by UART and communicate by sending simple messages
+- Created game prototype
+- Created script for Node MCU on ESP-8266 base
 
-- WiFi integration for remote play options.
+## Future Development:
+- Create communication between game and HW part
