@@ -29,28 +29,34 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r TicTacToeSWPart/requirements.txt
-
-      # Install Arduino CLI
-      - name: Install Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
-        with:
-          version: latest
-
-      # Build the Arduino project (TicTacToe.ino)
-      - name: Compile Arduino Sketch
-        run: |
-          arduino-cli compile --fqbn arduino:avr:uno HWPart/TicTacToe
-
+          
       # Run Python tests
       - name: Run tests
         run: |
           python -m pytest --junitxml=test-reports/results.xml TicTacToeSWPart/tests.py
+          
+      # Install Arduino CLI
+      - name: Set up Arduino CLI
+        run: |
+          wget https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz
+          tar -xvf arduino-cli_latest_Linux_64bit.tar.gz
+          sudo mv arduino-cli /usr/local/bin/
+          arduino-cli config init
+
+      - name: Install ESP8266 core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install esp8266:esp8266  # Install the ESP8266 core
+
+      - name: Compile Arduino Sketch for NodeMCU
+        run: |
+          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 HWPart/TicTacToe.ino
 
       # Collect binaries as artifacts
       - name: Upload binaries
         uses: actions/upload-artifact@v3
         with:
-          name: arduino-binaries
+          name: compiled-files
           path: HWPart/TicTacToe/build/
 
       # Collect test results as artifacts
