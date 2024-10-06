@@ -56,7 +56,8 @@ jobs:
 
       - name: Compile Arduino Sketch for NodeMCU
         run: |
-          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 HWPart/TicTacToe/TicTacToe.ino
+          mkdir -p build  # Ensure the build directory exists
+          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 --output-dir build HWPart/TicTacToe/TicTacToe.ino
 
       # Collect binaries as artifacts
       - name: Upload binaries
