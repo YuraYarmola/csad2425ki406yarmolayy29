@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: compiled-files
-          path: HWPart/TicTacToe/build/
+          path: build/*.bin 
 
       # Collect test results as artifacts
       - name: Upload test reports
