@@ -29,7 +29,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r TicTacToeSWPart/requirements.txt
-          pip install -e .
+          pip install pytest
           
       # Run Python tests
       - name: Run tests
