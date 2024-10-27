@@ -53,6 +53,10 @@ jobs:
           arduino-cli core update-index
           arduino-cli core install arduino:avr  # Install the Arduino AVR core
 
+      - name: Install ArduinoJson library
+        run: |
+          arduino-cli lib install ArduinoJson
+
       - name: Compile Arduino Sketch for Arduino Nano (Old Bootloader)
         run: |
           mkdir -p build  # Ensure the build directory exists
