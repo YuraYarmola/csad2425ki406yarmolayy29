@@ -24,14 +24,14 @@ This project involves multiple stages:
 - **Version Control**: Git for version tracking and collaboration.
 
 ### Hardware:
-- **Microcontroller**: ESP-8266.
+- **Microcontroller**: Arduino Nano
 - **Output**: Client-Server page for representing game states.
-- **Power Supply**: 3.3V supply for ESP-8266 or USB power.
+- **Power Supply**: 5V supply for Arduino Nano or USB power.
 
 ## New features
-- Software client with connecting to HW by UART and communicate by sending simple messages
-- Created game prototype
-- Created script for Node MCU on ESP-8266 base
+- Created .ino script for Arduino Nano HW part of Game 
+- Created Python Tkinter interface with UART communicate
+- Created CI script for automatic compile and upload script for board
 
 ## Future Development:
-- Create communication between game and HW part
+- Create doxygen documentation
