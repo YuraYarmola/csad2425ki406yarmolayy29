@@ -44,15 +44,6 @@ jobs:
           sudo mv arduino-cli /usr/local/bin/
           arduino-cli config init
 
-      - name: Add Arduino AVR package URL
-        run: |
-          arduino-cli config set board_manager.additional_urls https://downloads.arduino.cc/packages/arduino/hardware/avr/1.8.5/avr-1.8.5.json
-
-      - name: Install Arduino AVR core
-        run: |
-          arduino-cli core update-index
-          arduino-cli core install arduino:avr  # Install the Arduino AVR core
-
       - name: Compile Arduino Sketch for Arduino Nano (Old Bootloader)
         run: |
           mkdir -p build  # Ensure the build directory exists
