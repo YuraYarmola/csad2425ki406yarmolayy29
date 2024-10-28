@@ -1,3 +1,4 @@
+import threading
 import serial
 import serial.tools.list_ports
 import tkinter as tk
@@ -14,6 +15,7 @@ class UARTCommunication:
     def open_port(self, port, baud_rate=9600):
         try:
             self.ser = serial.Serial(port, baud_rate, timeout=1)
+            print(self.ser.is_open)
             return f"Connected to {port}"
         except Exception as e:
             self.ser = None
@@ -35,17 +37,23 @@ class UARTCommunication:
                 return f"Error: {e}"
         return "Port not opened"
 
+    def close_port(self):
+        if self.ser and self.ser.is_open:
+            self.ser.close()
 
-def auto_receive(uart, output_text, status_label, root):
-    response = uart.receive_message()
-    if response and response != "Port not opened":
-        output_text.insert(tk.END, f"Received: {response}\n")
-        output_text.see(tk.END)
-    root.after(100, lambda: auto_receive(uart, output_text, status_label, root))
+
+def receive_thread(uart, output_text, status_label, stop_event):
+    while not stop_event.is_set():
+        response = uart.receive_message()
+        if response and response != "Port not opened":
+            output_text.insert(tk.END, f"Received: {response}\n")
+            output_text.see(tk.END)
+        stop_event.wait(0.1)  # Затримка між отриманнями даних
 
 
 def start_gui():
     uart = UARTCommunication()
+    stop_event = threading.Event()
 
     root = tk.Tk()
     root.title("UART Communication Interface")
@@ -55,13 +63,13 @@ def start_gui():
     port_var = tk.StringVar()
     port_combobox = ttk.Combobox(root, textvariable=port_var, values=uart.list_ports(), state="readonly")
     port_combobox.grid(row=0, column=1, padx=10, pady=10)
-    port_combobox.current(0)
 
     def open_port_callback():
         status = uart.open_port(port_var.get())
         status_label.config(text=status)
         if "Connected" in status:
-            auto_receive(uart, output_text, status_label, root)
+            stop_event.clear()
+            threading.Thread(target=receive_thread, args=(uart, output_text, status_label, stop_event), daemon=True).start()
 
     open_button = tk.Button(root, text="Open Port", command=open_port_callback)
     open_button.grid(row=0, column=2, padx=10, pady=10)
@@ -84,6 +92,12 @@ def start_gui():
     status_label = tk.Label(root, text="Status: Not connected", fg="blue")
     status_label.grid(row=3, column=0, columnspan=3, padx=10, pady=10)
 
+    def on_closing():
+        stop_event.set()
+        uart.close_port()
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
     root.mainloop()
 
 

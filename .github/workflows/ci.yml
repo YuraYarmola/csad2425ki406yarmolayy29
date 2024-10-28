@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - feature/develop/task2
+      - feature/develop/task3
   pull_request:
     branches:
       - develop
@@ -44,20 +44,23 @@ jobs:
           sudo mv arduino-cli /usr/local/bin/
           arduino-cli config init
 
-      - name: Add ESP8266 package URL
-        run: |
-          arduino-cli config set board_manager.additional_urls http://arduino.esp8266.com/stable/package_esp8266com_index.json
+#      - name: Add Arduino AVR package URL
+#        run: |
+#          arduino-cli config set board_manager.additional_urls https://downloads.arduino.cc/packages/arduino/hardware/avr/1.8.5/avr-1.8.5.json
 
-
-      - name: Install ESP8266 core
+      - name: Install Arduino AVR core
         run: |
           arduino-cli core update-index
-          arduino-cli core install esp8266:esp8266  # Install the ESP8266 core
+          arduino-cli core install arduino:avr  # Install the Arduino AVR core
 
-      - name: Compile Arduino Sketch for NodeMCU
+      - name: Install ArduinoJson library
+        run: |
+          arduino-cli lib install ArduinoJson
+
+      - name: Compile Arduino Sketch for Arduino Nano (Old Bootloader)
         run: |
           mkdir -p build  # Ensure the build directory exists
-          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 --output-dir build HWPart/TicTacToe/TicTacToe.ino
+          arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir build HWPart/TicTacToe/TicTacToe.ino
 
       # Collect binaries as artifacts
       - name: Upload binaries
