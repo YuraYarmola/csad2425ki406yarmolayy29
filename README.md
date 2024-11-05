@@ -29,9 +29,7 @@ This project involves multiple stages:
 - **Power Supply**: 5V supply for Arduino Nano or USB power.
 
 ## New features
-- Created .ino script for Arduino Nano HW part of Game 
-- Created Python Tkinter interface with UART communicate
-- Created CI script for automatic compile and upload script for board
+- Add script for creating Doxygen documentation
 
 ## Future Development:
-- Create doxygen documentation
+- Automated tests

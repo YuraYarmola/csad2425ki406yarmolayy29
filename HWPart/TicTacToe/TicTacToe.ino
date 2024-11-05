@@ -7,6 +7,10 @@ char currentPlayer = 'X';
 bool gameOver = false;
 int gameMode = 0;
 
+/**
+ * @brief Initializes the TicTacToe board and resets game variables.
+ * Sets all board positions to empty (' ') and sets the current player to 'X'.
+ */
 void initializeBoard() {
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
@@ -17,6 +21,12 @@ void initializeBoard() {
     gameOver = false;
 }
 
+/**
+ * @brief Sends a JSON message over Serial.
+ * 
+ * @param type The type of message (e.g., "info", "error", "win_status").
+ * @param message The message content.
+ */
 void sendJsonMessage(const char* type, const char* message) {
     StaticJsonDocument<200> doc;
     doc["type"] = type;
@@ -25,6 +35,9 @@ void sendJsonMessage(const char* type, const char* message) {
     Serial.println();
 }
 
+/**
+ * @brief Sends the current state of the board over Serial as a JSON message.
+ */
 void sendBoardState() {
     StaticJsonDocument<300> doc;
     doc["type"] = "board";
@@ -39,6 +52,11 @@ void sendBoardState() {
     Serial.println();
 }
 
+/**
+ * @brief Checks if the current player has won the game.
+ * 
+ * @return true if the current player has a winning combination, false otherwise.
+ */
 bool checkWin() {
     for (int i = 0; i < BOARD_SIZE; i++) {
         if (board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) return true;
@@ -49,6 +67,11 @@ bool checkWin() {
     return false;
 }
 
+/**
+ * @brief Checks if the game has ended in a draw.
+ * 
+ * @return true if the board is full and there is no winner, false otherwise.
+ */
 bool checkDraw() {
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
@@ -58,6 +81,10 @@ bool checkDraw() {
     return true;
 }
 
+/**
+ * @brief Performs a random move for the AI.
+ * Places the current player's symbol at a random empty position on the board.
+ */
 void aiMoveRandom() {
     while (true) {
         int row = random(0, BOARD_SIZE);
@@ -69,6 +96,10 @@ void aiMoveRandom() {
     }
 }
 
+/**
+ * @brief Handles an AI vs AI game mode, making random moves until the game is over.
+ * Alternates moves between two AI players until a win or draw condition is met.
+ */
 void handleAiVsAi() {
     while (!gameOver) {
         if (checkDraw()) {
@@ -88,11 +119,16 @@ void handleAiVsAi() {
         }
         currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';  // Switch players
         sendBoardState();  // Send the board state after each move
-
-        
     }
 }
 
+/**
+ * @brief Makes a move for the current player at the specified board position.
+ * 
+ * @param row The row index (0-2).
+ * @param col The column index (0-2).
+ * @return true if the move is valid and successful, false otherwise.
+ */
 bool makeMove(int row, int col) {
     if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE && board[row][col] == ' ' && !gameOver) {
         board[row][col] = currentPlayer;
@@ -111,12 +147,20 @@ bool makeMove(int row, int col) {
     return false;
 }
 
+/**
+ * @brief Initializes the game and sends a startup message.
+ * Sets up Serial communication and initializes the board.
+ */
 void setup() {
     Serial.begin(9600);
     initializeBoard();
     sendJsonMessage("info", "TicTacToe Game Started");
 }
 
+/**
+ * @brief Main game loop, reads Serial input and processes commands.
+ * Processes moves, resets, and mode changes based on JSON commands from Serial input.
+ */
 void loop() {
     if (Serial.available() > 0) {
         StaticJsonDocument<200> doc;
