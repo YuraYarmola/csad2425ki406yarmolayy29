@@ -36,25 +36,29 @@ jobs:
         run: |
           Invoke-WebRequest -Uri https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_64bit.zip -OutFile arduino-cli.zip
           Expand-Archive -Path arduino-cli.zip -DestinationPath $Env:USERPROFILE\arduino-cli
-          $Env:PATH += ";$Env:USERPROFILE\arduino-cli"  # Додаємо в PATH
-          arduino-cli config init
+          $ArduinoCLIPath = "$Env:USERPROFILE\arduino-cli\arduino-cli.exe"
+          $Env:PATH += ";$Env:USERPROFILE\arduino-cli"
+          & $ArduinoCLIPath config init
 
       # Install Arduino AVR core
       - name: Install Arduino AVR core
         run: |
-          arduino-cli core update-index
-          arduino-cli core install arduino:avr  # Install the Arduino AVR core
+          $ArduinoCLIPath = "$Env:USERPROFILE\arduino-cli\arduino-cli.exe"
+          & $ArduinoCLIPath core update-index
+          & $ArduinoCLIPath core install arduino:avr
 
       # Install ArduinoJson library
       - name: Install ArduinoJson library
         run: |
-          arduino-cli lib install ArduinoJson
+          $ArduinoCLIPath = "$Env:USERPROFILE\arduino-cli\arduino-cli.exe"
+          & $ArduinoCLIPath lib install ArduinoJson
 
       # Compile Arduino Sketch for Arduino Nano (Old Bootloader)
       - name: Compile Arduino Sketch
         run: |
+          $ArduinoCLIPath = "$Env:USERPROFILE\arduino-cli\arduino-cli.exe"
           mkdir build
-          arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir build HWPart/TicTacToe/TicTacToe.ino
+          & $ArduinoCLIPath compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir build HWPart/TicTacToe/TicTacToe.ino
 
       # Run tests using the PowerShell script
       - name: Run Tests
