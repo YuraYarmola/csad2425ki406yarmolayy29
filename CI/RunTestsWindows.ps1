@@ -10,7 +10,8 @@ function Is-ComPortConnected($portName) {
     }
 }
 if ($env:GITHUB_ACTIONS -eq 'true') {
-    $PythonPath = "${env:PYTHON_LOCATION}\python.exe"
+    $PythonPath = "$env:pythonLocation\python.exe"
+
 } else {
     $PythonPath = "D:\LPNU\SEMESTER7\APKS\csad2425ki406yarmolayy29\TicTacToeSWPart\.venv\Scripts\python.exe"
 }
