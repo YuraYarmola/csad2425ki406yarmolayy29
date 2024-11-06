@@ -125,11 +125,6 @@ def reset_game(uart):
 def auto_receive(uart, buttons, output_text, root):
     """
     Periodically checks for incoming messages on the UART and updates the GUI accordingly.
-
-    @param uart The UARTCommunication instance for receiving messages.
-    @param buttons The GUI button widgets for each cell in the game board.
-    @param output_text The text area for displaying received messages.
-    @param root The main tkinter root window for scheduling periodic checks.
     """
     try:
         if uart.ser and uart.ser.is_open:
@@ -140,11 +135,10 @@ def auto_receive(uart, buttons, output_text, root):
                     if "board" in response:
                         update_game_board(response["board"], buttons)
                     else:
-                        output_text.insert(tk.END, f"Game status: {response['message']}\n")
+                        output_text.insert(tk.END, f"Game status: {response.get('message', 'No message')}\n")
 
                     if response.get("type") == "win_status":
-                        thread = threading.Thread(target=messagebox.showinfo, args=("Win Status",
-                                                                                    response.get("message")))
+                        thread = threading.Thread(target=messagebox.showinfo, args=("Win Status", response.get("message", "No message")))
                         thread.start()
 
                 else:
@@ -153,6 +147,7 @@ def auto_receive(uart, buttons, output_text, root):
     except Exception as e:
         output_text.insert(tk.END, f"Error: {str(e)}\n")
     root.after(100, lambda: auto_receive(uart, buttons, output_text, root))
+
 
 
 def start_gui():
