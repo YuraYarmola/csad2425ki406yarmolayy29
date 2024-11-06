@@ -77,4 +77,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-reports
-          path: test-reports/*.xml
+          path: TicTacToeSWPart/test-reports/*.xml
