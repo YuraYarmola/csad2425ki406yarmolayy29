@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - develop
-      - feature/develop/task3
+      - feature/develop/task5
   pull_request:
     branches:
       - develop
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       # Checkout the repository
@@ -30,48 +30,47 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r TicTacToeSWPart/requirements.txt
           pip install pytest
-          
-      # Run Python tests
-      - name: Run tests
-        run: |
-          python -m pytest --junitxml=test-reports/results.xml TicTacToeSWPart/tests.py
-          
-      # Install Arduino CLI
+
+      # Install Arduino CLI on Windows
       - name: Set up Arduino CLI
         run: |
-          wget https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz
-          tar -xvf arduino-cli_latest_Linux_64bit.tar.gz
-          sudo mv arduino-cli /usr/local/bin/
+          Invoke-WebRequest -Uri https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_64bit.zip -OutFile arduino-cli.zip
+          Expand-Archive -Path arduino-cli.zip -DestinationPath C:\arduino-cli
+          $env:PATH += ";C:\arduino-cli"
           arduino-cli config init
 
-#      - name: Add Arduino AVR package URL
-#        run: |
-#          arduino-cli config set board_manager.additional_urls https://downloads.arduino.cc/packages/arduino/hardware/avr/1.8.5/avr-1.8.5.json
-
+      # Install Arduino AVR core
       - name: Install Arduino AVR core
         run: |
           arduino-cli core update-index
           arduino-cli core install arduino:avr  # Install the Arduino AVR core
 
+      # Install ArduinoJson library
       - name: Install ArduinoJson library
         run: |
           arduino-cli lib install ArduinoJson
 
-      - name: Compile Arduino Sketch for Arduino Nano (Old Bootloader)
+      # Compile Arduino Sketch for Arduino Nano (Old Bootloader)
+      - name: Compile Arduino Sketch
         run: |
-          mkdir -p build  # Ensure the build directory exists
+          mkdir build
           arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir build HWPart/TicTacToe/TicTacToe.ino
 
-      # Collect binaries as artifacts
+      # Run tests using the PowerShell script
+      - name: Run Tests
+        run: |
+          PowerShell -ExecutionPolicy Bypass -File ./CI/RunTestsWindows.ps1
+
+      # Upload compiled binaries as artifacts
       - name: Upload binaries
         uses: actions/upload-artifact@v3
         with:
           name: compiled-files
-          path: build/*.bin 
+          path: build/*.bin
 
       # Collect test results as artifacts
       - name: Upload test reports
         uses: actions/upload-artifact@v3
         with:
           name: test-reports
-          path: test-reports/results.xml
+          path: test-reports/*.xml

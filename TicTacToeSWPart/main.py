@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext
 from tkinter import messagebox
 
+
 class UARTCommunication:
     """
     Class to handle UART communication, including opening ports, sending and receiving messages.
@@ -133,6 +134,7 @@ def auto_receive(uart, buttons, output_text, root):
     try:
         if uart.ser and uart.ser.is_open:
             response = uart.receive_message()
+            print(response)
             if response and response != "Port not opened":
                 if isinstance(response, dict):
                     if "board" in response:

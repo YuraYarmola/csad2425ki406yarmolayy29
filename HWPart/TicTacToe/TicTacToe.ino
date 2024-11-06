@@ -144,6 +144,8 @@ bool makeMove(int row, int col) {
         }
         return true;
     }
+    // Send error if move is invalid
+    sendJsonMessage("error", "Invalid move.");  // Only send error, no board update
     return false;
 }
 
@@ -184,7 +186,7 @@ void loop() {
             } else if (strcmp(command, "MODE") == 0) {
                 gameMode = doc["mode"];
                 String message = "Game mode set to " + String(gameMode);
-                sendJsonMessage("game_mode", message.c_str());
+                sendJsonMessage("game_mode", message.c_str());  // Send game mode message first
                 initializeBoard();
                 sendJsonMessage("game_status", "Game reset.");
                 sendBoardState();
