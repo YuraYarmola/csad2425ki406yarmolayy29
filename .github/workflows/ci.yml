@@ -1,14 +1,3 @@
-name: CI Workflow
-
-on:
-  push:
-    branches:
-      - develop
-      - feature/develop/task5
-  pull_request:
-    branches:
-      - develop
-
 jobs:
   build:
     runs-on: windows-latest
@@ -35,8 +24,8 @@ jobs:
       - name: Set up Arduino CLI
         run: |
           Invoke-WebRequest -Uri https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_64bit.zip -OutFile arduino-cli.zip
-          Expand-Archive -Path arduino-cli.zip -DestinationPath C:\arduino-cli
-          $env:PATH += ";C:\arduino-cli"
+          Expand-Archive -Path arduino-cli.zip -DestinationPath $Env:USERPROFILE\arduino-cli
+          $Env:PATH += ";$Env:USERPROFILE\arduino-cli"  # Додаємо в PATH
           arduino-cli config init
 
       # Install Arduino AVR core
