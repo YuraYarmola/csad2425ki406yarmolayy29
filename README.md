@@ -29,7 +29,4 @@ This project involves multiple stages:
 - **Power Supply**: 5V supply for Arduino Nano or USB power.
 
 ## New features
-- Add script for creating Doxygen documentation
-
-## Future Development:
 - Automated tests
